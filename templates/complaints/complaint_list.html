@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Complaints" %}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3><i class="bi bi-exclamation-circle"></i> {% trans "Complaints" %}</h3>
+    <a href="{% url 'complaints:add' %}" class="btn btn-dark btn-sm">+ {% trans "Raise Complaint" %}</a>
+</div>
+<div class="card card-stat p-3">
+    <table class="table table-hover align-middle">
+        <thead><tr><th>{% trans "Title" %}</th><th>{% trans "Category" %}</th><th>{% trans "Priority" %}</th><th>{% trans "Raised By" %}</th><th>{% trans "Status" %}</th><th></th></tr></thead>
+        <tbody>
+        {% for c in complaints %}
+        <tr>
+            <td>{{ c.title }}</td>
+            <td>{{ c.get_category_display }}</td>
+            <td>
+                {% if c.priority == 'HIGH' %}<span class="badge bg-danger badge-status">High</span>
+                {% elif c.priority == 'MEDIUM' %}<span class="badge bg-warning text-dark badge-status">Medium</span>
+                {% else %}<span class="badge bg-secondary badge-status">Low</span>{% endif %}
+            </td>
+            <td>{{ c.raised_by }}</td>
+            <td>
+                {% if c.status == 'OPEN' %}<span class="badge bg-danger badge-status">Open</span>
+                {% elif c.status == 'IN_PROGRESS' %}<span class="badge bg-warning text-dark badge-status">In Progress</span>
+                {% elif c.status == 'RESOLVED' %}<span class="badge bg-success badge-status">Resolved</span>
+                {% else %}<span class="badge bg-secondary badge-status">Closed</span>{% endif %}
+            </td>
+            <td><a href="{% url 'complaints:detail' c.pk %}" class="btn btn-sm btn-outline-dark">{% trans "View" %}</a></td>
+        </tr>
+        {% empty %}<tr><td colspan="6" class="text-center text-muted py-4">{% trans "No complaints found." %}</td></tr>{% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

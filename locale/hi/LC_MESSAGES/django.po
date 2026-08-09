@@ -1,0 +1,498 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Language: hi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Absent"
+msgstr "अनुपस्थित"
+
+msgid "Active"
+msgstr "सक्रिय"
+
+msgid "Add Amenity"
+msgstr "सुविधा जोड़ें"
+
+msgid "Add Staff"
+msgstr "स्टाफ जोड़ें"
+
+msgid "Admin Panel"
+msgstr "एडमिन पैनल"
+
+msgid "All Bookings"
+msgstr "सभी बुकिंग"
+
+msgid "Amenities"
+msgstr "सुविधाएं"
+
+msgid "Amount"
+msgstr "राशि"
+
+msgid "Amount Paid"
+msgstr "भुगतान की गई राशि"
+
+msgid "Approve"
+msgstr "स्वीकृत करें"
+
+msgid "Approved"
+msgstr "स्वीकृत"
+
+msgid "Area (sqft)"
+msgstr "क्षेत्रफल (वर्ग फुट)"
+
+msgid "Balance"
+msgstr "शेष राशि"
+
+msgid "Bank Transfer"
+msgstr "बैंक ट्रांसफर"
+
+msgid "Billing"
+msgstr "बिलिंग"
+
+msgid "Billing & Maintenance"
+msgstr "बिलिंग और रखरखाव"
+
+msgid "Book Now"
+msgstr "अभी बुक करें"
+
+msgid "Bookings"
+msgstr "बुकिंग"
+
+msgid "Building"
+msgstr "इमारत"
+
+msgid "Cab/Taxi"
+msgstr "कैब/टैक्सी"
+
+msgid "Cancel"
+msgstr "रद्द करें"
+
+msgid "Cancelled"
+msgstr "रद्द"
+
+msgid "Card"
+msgstr "कार्ड"
+
+msgid "Cash"
+msgstr "नकद"
+
+msgid "Category"
+msgstr "श्रेणी"
+
+msgid "Charge Templates"
+msgstr "शुल्क टेम्पलेट"
+
+msgid "Check In"
+msgstr "चेक इन"
+
+msgid "Check Out"
+msgstr "चेक आउट"
+
+msgid "Check-in"
+msgstr "चेक-इन"
+
+msgid "Check-out"
+msgstr "चेक-आउट"
+
+msgid "Checked In"
+msgstr "चेक इन किया गया"
+
+msgid "Checked Out"
+msgstr "चेक आउट किया गया"
+
+msgid "Cheque"
+msgstr "चेक"
+
+msgid "Cleanliness"
+msgstr "सफाई"
+
+msgid "Closed"
+msgstr "बंद"
+
+msgid "Committee Member"
+msgstr "समिति सदस्य"
+
+msgid "Complaints"
+msgstr "शिकायतें"
+
+msgid "Completed"
+msgstr "पूर्ण"
+
+msgid "Confirm"
+msgstr "पुष्टि करें"
+
+msgid "Confirmed"
+msgstr "पुष्टि की गई"
+
+msgid "Dashboard"
+msgstr "डैशबोर्ड"
+
+msgid "Date"
+msgstr "दिनांक"
+
+msgid "Delete Notice"
+msgstr "सूचना हटाएं"
+
+msgid "Delivery"
+msgstr "डिलीवरी"
+
+msgid "Denied"
+msgstr "अस्वीकृत"
+
+msgid "Deny"
+msgstr "अस्वीकार करें"
+
+msgid "Due Date"
+msgstr "देय तिथि"
+
+msgid "Electrical"
+msgstr "बिजली"
+
+msgid "Electrician"
+msgstr "इलेक्ट्रीशियन"
+
+msgid "Event"
+msgstr "कार्यक्रम"
+
+msgid "Flat"
+msgstr "फ्लैट"
+
+msgid "Flats & Residents"
+msgstr "फ्लैट और निवासी"
+
+msgid "Floor"
+msgstr "मंजिल"
+
+msgid "Gardener"
+msgstr "माली"
+
+msgid "General"
+msgstr "सामान्य"
+
+msgid "Generate"
+msgstr "जनरेट करें"
+
+msgid "Generate Monthly Bills"
+msgstr "मासिक बिल जनरेट करें"
+
+msgid "Guest"
+msgstr "अतिथि"
+
+msgid "Half Day"
+msgstr "आधा दिन"
+
+msgid "High"
+msgstr "उच्च"
+
+msgid "Housekeeping"
+msgstr "हाउसकीपिंग"
+
+msgid "In Progress"
+msgstr "प्रगति में"
+
+msgid "Invalid username or password."
+msgstr "अमान्य उपयोगकर्ता नाम या पासवर्ड।"
+
+msgid "Invoice"
+msgstr "चालान"
+
+msgid "Log Visitor"
+msgstr "आगंतुक दर्ज करें"
+
+msgid "Login"
+msgstr "लॉगिन"
+
+msgid "Logout"
+msgstr "लॉगआउट"
+
+msgid "Low"
+msgstr "कम"
+
+msgid "Maintenance"
+msgstr "रखरखाव"
+
+msgid "Maintenance Charge Templates"
+msgstr "रखरखाव शुल्क टेम्पलेट"
+
+msgid "Medium"
+msgstr "मध्यम"
+
+msgid "Meeting"
+msgstr "बैठक"
+
+msgid "Method"
+msgstr "तरीका"
+
+msgid "My Bookings"
+msgstr "मेरी बुकिंग"
+
+msgid "My Complaints"
+msgstr "मेरी शिकायतें"
+
+msgid "My Flat"
+msgstr "मेरा फ्लैट"
+
+msgid "My Profile"
+msgstr "मेरी प्रोफ़ाइल"
+
+msgid "Name"
+msgstr "नाम"
+
+msgid "New Invoice"
+msgstr "नया चालान"
+
+msgid "New Template"
+msgstr "नया टेम्पलेट"
+
+msgid "No amenities configured yet."
+msgstr "अभी तक कोई सुविधा कॉन्फ़िगर नहीं की गई।"
+
+msgid "No bookings yet."
+msgstr "अभी तक कोई बुकिंग नहीं।"
+
+msgid "No complaints found."
+msgstr "कोई शिकायत नहीं मिली।"
+
+msgid "No complaints raised."
+msgstr "कोई शिकायत दर्ज नहीं की गई।"
+
+msgid "No complaints yet."
+msgstr "अभी तक कोई शिकायत नहीं।"
+
+msgid "No flats added yet."
+msgstr "अभी तक कोई फ्लैट नहीं जोड़ा गया।"
+
+msgid "No invoices found."
+msgstr "कोई चालान नहीं मिला।"
+
+msgid "No notices posted yet."
+msgstr "अभी तक कोई सूचना पोस्ट नहीं की गई।"
+
+msgid "No notices yet."
+msgstr "अभी तक कोई सूचना नहीं।"
+
+msgid "No payments recorded yet."
+msgstr "अभी तक कोई भुगतान दर्ज नहीं किया गया।"
+
+msgid "No staff added yet."
+msgstr "अभी तक कोई स्टाफ नहीं जोड़ा गया।"
+
+msgid "No templates yet."
+msgstr "अभी तक कोई टेम्पलेट नहीं।"
+
+msgid "No visitor entries."
+msgstr "कोई आगंतुक प्रविष्टि नहीं।"
+
+msgid "Noise"
+msgstr "शोर"
+
+msgid "Not assigned"
+msgstr "निर्दिष्ट नहीं"
+
+msgid "Notes"
+msgstr "टिप्पणियाँ"
+
+msgid "Notices"
+msgstr "सूचनाएं"
+
+msgid "On Leave"
+msgstr "छुट्टी पर"
+
+msgid "Open"
+msgstr "खुला"
+
+msgid "Open Complaints"
+msgstr "खुली शिकायतें"
+
+msgid "Other"
+msgstr "अन्य"
+
+msgid "Overdue"
+msgstr "अतिदेय"
+
+msgid "Owner Occupied"
+msgstr "मालिक द्वारा निवासित"
+
+msgid "Paid"
+msgstr "भुगतान किया गया"
+
+msgid "Parking"
+msgstr "पार्किंग"
+
+msgid "Partial"
+msgstr "आंशिक"
+
+msgid "Partially Paid"
+msgstr "आंशिक रूप से भुगतान"
+
+msgid "Password"
+msgstr "पासवर्ड"
+
+msgid "Payment History"
+msgstr "भुगतान इतिहास"
+
+msgid "Pending"
+msgstr "लंबित"
+
+msgid "Pending Approval"
+msgstr "स्वीकृति लंबित"
+
+msgid "Pending Dues"
+msgstr "लंबित बकाया"
+
+msgid "Pending Invoices"
+msgstr "लंबित चालान"
+
+msgid "Plumber"
+msgstr "प्लंबर"
+
+msgid "Plumbing"
+msgstr "प्लंबिंग"
+
+msgid "Post Notice"
+msgstr "सूचना पोस्ट करें"
+
+msgid "Present"
+msgstr "उपस्थित"
+
+msgid "Priority"
+msgstr "प्राथमिकता"
+
+msgid "Purpose"
+msgstr "उद्देश्य"
+
+msgid "Raise Complaint"
+msgstr "शिकायत दर्ज करें"
+
+msgid "Raised By"
+msgstr "द्वारा दर्ज"
+
+msgid "Recent Complaints"
+msgstr "हाल की शिकायतें"
+
+msgid "Recent Notices"
+msgstr "हाल की सूचनाएं"
+
+msgid "Record Payment"
+msgstr "भुगतान दर्ज करें"
+
+msgid "Ref#"
+msgstr "संदर्भ संख्या"
+
+msgid "Rented"
+msgstr "किराए पर"
+
+msgid "Requested"
+msgstr "अनुरोधित"
+
+msgid "Resident"
+msgstr "निवासी"
+
+msgid "Residents"
+msgstr "निवासी"
+
+msgid "Resolved"
+msgstr "हल किया गया"
+
+msgid "Save"
+msgstr "सहेजें"
+
+msgid "Save Changes"
+msgstr "परिवर्तन सहेजें"
+
+msgid "Security"
+msgstr "सुरक्षा"
+
+msgid "Security Guard"
+msgstr "सुरक्षा गार्ड"
+
+msgid "Select Charge Template"
+msgstr "शुल्क टेम्पलेट चुनें"
+
+msgid "Service/Repair"
+msgstr "सेवा/मरम्मत"
+
+msgid "Sign in to your account"
+msgstr "अपने खाते में साइन इन करें"
+
+msgid "Society"
+msgstr "सोसाइटी"
+
+msgid "Society Admin"
+msgstr "सोसाइटी एडमिन"
+
+msgid "Society Manager"
+msgstr "सोसाइटी मैनेजर"
+
+msgid "Staff"
+msgstr "स्टाफ"
+
+msgid "Staff Management"
+msgstr "स्टाफ प्रबंधन"
+
+msgid "Status"
+msgstr "स्थिति"
+
+msgid ""
+"This will create an invoice for every flat in the society using the selected"
+" template, due in 10 days."
+msgstr ""
+"यह चयनित टेम्पलेट का उपयोग करके सोसाइटी के हर फ्लैट के लिए एक चालान बनाएगा, "
+"जो 10 दिनों में देय होगा।"
+
+msgid "Title"
+msgstr "शीर्षक"
+
+msgid "Total Flats"
+msgstr "कुल फ्लैट"
+
+msgid "Type"
+msgstr "प्रकार"
+
+msgid "UPI"
+msgstr "यूपीआई"
+
+msgid "Urgent"
+msgstr "अत्यावश्यक"
+
+msgid "Username"
+msgstr "उपयोगकर्ता नाम"
+
+msgid "Vacant"
+msgstr "खाली"
+
+msgid "Vendor"
+msgstr "विक्रेता"
+
+msgid "View"
+msgstr "देखें"
+
+msgid "View Attachment"
+msgstr "अनुलग्नक देखें"
+
+msgid "Visiting"
+msgstr "मिलने आया"
+
+msgid "Visitor Management"
+msgstr "आगंतुक प्रबंधन"
+
+msgid "Visitors"
+msgstr "आगंतुक"
+
+msgid "Visitors Awaiting Approval"
+msgstr "स्वीकृति की प्रतीक्षा में आगंतुक"
+
+msgid "invoice(s)"
+msgstr "चालान"
+
+msgid "phone number"
+msgstr "फोन नंबर"
+
+msgid "photo"
+msgstr "फोटो"
+
+msgid "role"
+msgstr "भूमिका"

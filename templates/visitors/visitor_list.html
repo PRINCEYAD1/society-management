@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Visitors" %}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3><i class="bi bi-person-badge"></i> {% trans "Visitor Management" %}</h3>
+    {% if user.role == 'SECURITY' or user.is_admin_or_committee %}<a href="{% url 'visitors:add' %}" class="btn btn-dark btn-sm">+ {% trans "Log Visitor" %}</a>{% endif %}
+</div>
+<div class="card card-stat p-3">
+    <table class="table table-hover align-middle">
+        <thead><tr><th>{% trans "Name" %}</th><th>{% trans "Purpose" %}</th><th>{% trans "Visiting" %}</th><th>{% trans "Status" %}</th><th>{% trans "Check-in" %}</th><th>{% trans "Check-out" %}</th><th></th></tr></thead>
+        <tbody>
+        {% for v in visitors %}
+        <tr>
+            <td>{{ v.name }}{% if v.vehicle_number %} <span class="text-muted small">({{ v.vehicle_number }})</span>{% endif %}</td>
+            <td>{{ v.get_purpose_display }}</td>
+            <td>{{ v.visiting_flat }}</td>
+            <td>
+                {% if v.status == 'PENDING' %}<span class="badge bg-secondary badge-status">Pending</span>
+                {% elif v.status == 'APPROVED' %}<span class="badge bg-info text-dark badge-status">Approved</span>
+                {% elif v.status == 'DENIED' %}<span class="badge bg-danger badge-status">Denied</span>
+                {% elif v.status == 'CHECKED_IN' %}<span class="badge bg-success badge-status">Checked In</span>
+                {% else %}<span class="badge bg-dark badge-status">Checked Out</span>{% endif %}
+            </td>
+            <td>{{ v.check_in_time|date:"d M H:i"|default:"-" }}</td>
+            <td>{{ v.check_out_time|date:"d M H:i"|default:"-" }}</td>
+            <td>
+                {% if v.status == 'PENDING' and not user.is_admin_or_committee and user.role != 'SECURITY' %}
+                    <a href="{% url 'visitors:approve' v.pk %}" class="btn btn-sm btn-success">{% trans "Approve" %}</a>
+                    <a href="{% url 'visitors:deny' v.pk %}" class="btn btn-sm btn-outline-danger">{% trans "Deny" %}</a>
+                {% elif v.status == 'APPROVED' and user.role == 'SECURITY' or v.status == 'APPROVED' and user.is_admin_or_committee %}
+                    <a href="{% url 'visitors:checkin' v.pk %}" class="btn btn-sm btn-outline-dark">{% trans "Check In" %}</a>
+                {% elif v.status == 'CHECKED_IN' and user.role == 'SECURITY' or v.status == 'CHECKED_IN' and user.is_admin_or_committee %}
+                    <a href="{% url 'visitors:checkout' v.pk %}" class="btn btn-sm btn-outline-dark">{% trans "Check Out" %}</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}<tr><td colspan="7" class="text-center text-muted py-4">{% trans "No visitor entries." %}</td></tr>{% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

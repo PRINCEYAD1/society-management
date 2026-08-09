@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Billing" %}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3><i class="bi bi-receipt"></i> {% trans "Billing & Maintenance" %}</h3>
+    {% if user.is_admin_or_committee %}
+    <div>
+        <a href="{% url 'billing:template_list' %}" class="btn btn-outline-dark btn-sm">{% trans "Charge Templates" %}</a>
+        <a href="{% url 'billing:generate_monthly' %}" class="btn btn-outline-dark btn-sm">{% trans "Generate Monthly Bills" %}</a>
+        <a href="{% url 'billing:invoice_create' %}" class="btn btn-dark btn-sm">+ {% trans "New Invoice" %}</a>
+    </div>
+    {% endif %}
+</div>
+<div class="card card-stat p-3">
+    <table class="table table-hover align-middle">
+        <thead><tr><th>#</th>{% if user.is_admin_or_committee %}<th>{% trans "Flat" %}</th>{% endif %}<th>{% trans "Title" %}</th><th>{% trans "Amount" %}</th><th>{% trans "Due Date" %}</th><th>{% trans "Status" %}</th><th></th></tr></thead>
+        <tbody>
+        {% for inv in invoices %}
+            <tr>
+                <td>{{ inv.id }}</td>
+                {% if user.is_admin_or_committee %}<td>{{ inv.flat }}</td>{% endif %}
+                <td>{{ inv.title }}</td>
+                <td>₹{{ inv.amount }}</td>
+                <td>{{ inv.due_date }}</td>
+                <td>
+                    {% if inv.status == 'PAID' %}<span class="badge bg-success badge-status">{% trans "Paid" %}</span>
+                    {% elif inv.status == 'OVERDUE' %}<span class="badge bg-danger badge-status">{% trans "Overdue" %}</span>
+                    {% elif inv.status == 'PARTIAL' %}<span class="badge bg-warning text-dark badge-status">{% trans "Partial" %}</span>
+                    {% else %}<span class="badge bg-secondary badge-status">{% trans "Pending" %}</span>{% endif %}
+                </td>
+                <td><a href="{% url 'billing:invoice_detail' inv.pk %}" class="btn btn-sm btn-outline-dark">{% trans "View" %}</a></td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="7" class="text-center text-muted py-4">{% trans "No invoices found." %}</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

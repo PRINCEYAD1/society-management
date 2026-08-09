@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Bookings" %}{% endblock %}
+{% block content %}
+<h3 class="mb-4"><i class="bi bi-calendar-check"></i> {% if user.is_admin_or_committee %}{% trans "All Bookings" %}{% else %}{% trans "My Bookings" %}{% endif %}</h3>
+<div class="card card-stat p-3">
+    <table class="table table-hover align-middle">
+        <thead><tr><th>Amenity</th>{% if user.is_admin_or_committee %}<th>Booked By</th>{% endif %}<th>Date</th><th>Time</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+        {% for b in bookings %}
+        <tr>
+            <td>{{ b.amenity.name }}</td>
+            {% if user.is_admin_or_committee %}<td>{{ b.booked_by }}</td>{% endif %}
+            <td>{{ b.booking_date }}</td>
+            <td>{{ b.start_time|time:"H:i" }} - {{ b.end_time|time:"H:i" }}</td>
+            <td>
+                {% if b.status == 'REQUESTED' %}<span class="badge bg-secondary badge-status">Requested</span>
+                {% elif b.status == 'CONFIRMED' %}<span class="badge bg-success badge-status">Confirmed</span>
+                {% elif b.status == 'CANCELLED' %}<span class="badge bg-danger badge-status">Cancelled</span>
+                {% else %}<span class="badge bg-dark badge-status">Completed</span>{% endif %}
+            </td>
+            <td>
+                {% if b.status == 'REQUESTED' and user.is_admin_or_committee %}<a href="{% url 'amenities:booking_confirm' b.pk %}" class="btn btn-sm btn-success">{% trans "Confirm" %}</a>{% endif %}
+                {% if b.status == 'REQUESTED' or b.status == 'CONFIRMED' %}<a href="{% url 'amenities:booking_cancel' b.pk %}" class="btn btn-sm btn-outline-danger">{% trans "Cancel" %}</a>{% endif %}
+            </td>
+        </tr>
+        {% empty %}<tr><td colspan="6" class="text-center text-muted py-4">{% trans "No bookings yet." %}</td></tr>{% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

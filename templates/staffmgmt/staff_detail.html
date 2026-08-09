@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}{{ staff.name }}{% endblock %}
+{% block content %}
+<h3 class="mb-4">{{ staff.name }} <span class="badge bg-light text-dark">{{ staff.get_category_display }}</span></h3>
+<div class="card card-stat p-4 mb-4" style="max-width:500px;">
+    <p><strong>Phone:</strong> {{ staff.phone_number|default:"-" }}</p>
+    <p><strong>Address:</strong> {{ staff.address|default:"-" }}</p>
+    <p><strong>ID Proof #:</strong> {{ staff.id_proof_number|default:"-" }}</p>
+    <p><strong>Monthly Salary:</strong> ₹{{ staff.monthly_salary }}</p>
+    <p><strong>Joined:</strong> {{ staff.date_joined }}</p>
+    <a href="{% url 'staffmgmt:mark_attendance' staff.pk %}" class="btn btn-dark btn-sm">Mark Attendance</a>
+</div>
+<h5>Recent Attendance</h5>
+<div class="card card-stat p-3" style="max-width:500px;">
+    <table class="table"><thead><tr><th>Date</th><th>Status</th></tr></thead>
+    <tbody>
+    {% for r in records %}<tr><td>{{ r.date }}</td><td>{{ r.get_status_display }}</td></tr>
+    {% empty %}<tr><td colspan="2" class="text-muted text-center">No records yet.</td></tr>{% endfor %}
+    </tbody></table>
+</div>
+{% endblock %}

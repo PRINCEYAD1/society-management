@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Flats & Residents" %}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3><i class="bi bi-house-door"></i> {% trans "Flats & Residents" %}</h3>
+    <div>
+        <a href="{% url 'core:society_add' %}" class="btn btn-outline-dark btn-sm">+ {% trans "Society" %}</a>
+        <a href="{% url 'core:building_add' %}" class="btn btn-outline-dark btn-sm">+ {% trans "Building" %}</a>
+        <a href="{% url 'core:flat_add' %}" class="btn btn-dark btn-sm">+ {% trans "Flat" %}</a>
+    </div>
+</div>
+<div class="card card-stat p-3">
+    <table class="table table-hover align-middle">
+        <thead><tr><th>{% trans "Flat" %}</th><th>{% trans "Building" %}</th><th>{% trans "Floor" %}</th><th>{% trans "Area (sqft)" %}</th><th>{% trans "Type" %}</th><th>{% trans "Residents" %}</th></tr></thead>
+        <tbody>
+        {% for flat in flats %}
+            <tr>
+                <td class="fw-semibold">{{ flat.flat_number }}</td>
+                <td>{{ flat.building.name }}</td>
+                <td>{{ flat.floor }}</td>
+                <td>{{ flat.area_sqft }}</td>
+                <td><span class="badge bg-light text-dark">{{ flat.get_ownership_type_display }}</span></td>
+                <td>
+                    {% for r in flat.residents.all %}{{ r.user.get_full_name|default:r.user.username }}{% if not forloop.last %}, {% endif %}{% empty %}<span class="text-muted">None</span>{% endfor %}
+                </td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="6" class="text-center text-muted py-4">{% trans "No flats added yet." %}</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

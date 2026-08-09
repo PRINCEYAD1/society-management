@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{{ complaint.title }}{% endblock %}
+{% block content %}
+<h3 class="mb-3">{{ complaint.title }}</h3>
+<div class="card card-stat p-4 mb-4" style="max-width:700px;">
+    <p><strong>Category:</strong> {{ complaint.get_category_display }}</p>
+    <p><strong>Priority:</strong> {{ complaint.get_priority_display }}</p>
+    <p><strong>Raised By:</strong> {{ complaint.raised_by }} {% if complaint.flat %}({{ complaint.flat }}){% endif %}</p>
+    <p><strong>Status:</strong> {{ complaint.get_status_display }}</p>
+    <p><strong>Assigned To:</strong> {{ complaint.assigned_to|default:"Unassigned" }}</p>
+    <p style="white-space: pre-line;">{{ complaint.description }}</p>
+
+    {% if status_form %}
+    <form method="post" action="{% url 'complaints:update_status' complaint.pk %}" class="row g-2 mt-2">
+        {% csrf_token %}
+        <div class="col-md-5">{{ status_form.status }}</div>
+        <div class="col-md-5">{{ status_form.assigned_to }}</div>
+        <div class="col-md-2"><button class="btn btn-dark w-100">Update</button></div>
+    </form>
+    {% endif %}
+</div>
+
+<h5>Comments</h5>
+<div class="card card-stat p-3 mb-3" style="max-width:700px;">
+    {% for comment in complaint.comments.all %}
+        <div class="border-bottom py-2"><strong>{{ comment.author }}</strong> <span class="text-muted small">{{ comment.created_on|date:"d M, H:i" }}</span><p class="mb-0">{{ comment.comment }}</p></div>
+    {% empty %}<p class="text-muted">No comments yet.</p>{% endfor %}
+</div>
+<form method="post" style="max-width:700px;">
+    {% csrf_token %}
+    <div class="input-group">
+        {{ comment_form.comment }}
+        <button class="btn btn-dark">Post</button>
+    </div>
+</form>
+{% endblock %}

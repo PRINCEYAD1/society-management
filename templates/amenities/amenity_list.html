@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Amenities" %}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3><i class="bi bi-calendar-check"></i> {% trans "Amenities" %}</h3>
+    <div>
+        <a href="{% url 'amenities:my_bookings' %}" class="btn btn-outline-dark btn-sm">{% trans "My Bookings" %}</a>
+        {% if user.is_admin_or_committee %}<a href="{% url 'amenities:add' %}" class="btn btn-dark btn-sm">+ {% trans "Add Amenity" %}</a>{% endif %}
+    </div>
+</div>
+<div class="row g-3">
+{% for a in amenities %}
+    <div class="col-md-4">
+        <div class="card card-stat p-3 h-100">
+            <h5>{{ a.name }}</h5>
+            <p class="text-muted small">{{ a.description|truncatewords:15 }}</p>
+            <p class="small">Capacity: {{ a.capacity }} | Fee: ₹{{ a.booking_fee }}</p>
+            <p class="small">Hours: {{ a.open_time|time:"H:i" }} - {{ a.close_time|time:"H:i" }}</p>
+            <a href="{% url 'amenities:book' a.pk %}" class="btn btn-dark btn-sm mt-auto">{% trans "Book Now" %}</a>
+        </div>
+    </div>
+{% empty %}<p class="text-muted">{% trans "No amenities configured yet." %}</p>{% endfor %}
+</div>
+{% endblock %}

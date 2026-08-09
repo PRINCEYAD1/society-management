@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Invoice" %} #{{ invoice.id }}{% endblock %}
+{% block content %}
+<h3 class="mb-4"><i class="bi bi-receipt"></i> {% trans "Invoice" %} #{{ invoice.id }}</h3>
+<div class="card card-stat p-4 mb-4" style="max-width:600px;">
+    <p><strong>{% trans "Flat" %}:</strong> {{ invoice.flat }}</p>
+    <p><strong>{% trans "Title" %}:</strong> {{ invoice.title }}</p>
+    <p><strong>{% trans "Amount" %}:</strong> ₹{{ invoice.amount }}</p>
+    <p><strong>{% trans "Amount Paid" %}:</strong> ₹{{ invoice.amount_paid }}</p>
+    <p><strong>{% trans "Balance" %}:</strong> ₹{{ invoice.balance }}</p>
+    <p><strong>{% trans "Due Date" %}:</strong> {{ invoice.due_date }}</p>
+    <p><strong>{% trans "Status" %}:</strong> {{ invoice.get_status_display }}</p>
+    {% if invoice.notes %}<p><strong>{% trans "Notes" %}:</strong> {{ invoice.notes }}</p>{% endif %}
+    {% if user.is_admin_or_committee and invoice.status != 'PAID' %}
+        <a href="{% url 'billing:record_payment' invoice.pk %}" class="btn btn-dark mt-2">{% trans "Record Payment" %}</a>
+    {% endif %}
+</div>
+<h5>{% trans "Payment History" %}</h5>
+<div class="card card-stat p-3" style="max-width:600px;">
+    <table class="table">
+        <thead><tr><th>{% trans "Date" %}</th><th>{% trans "Amount" %}</th><th>{% trans "Method" %}</th><th>{% trans "Ref#" %}</th></tr></thead>
+        <tbody>
+        {% for p in invoice.payments.all %}
+            <tr><td>{{ p.paid_on }}</td><td>₹{{ p.amount }}</td><td>{{ p.get_method_display }}</td><td>{{ p.reference_number|default:"-" }}</td></tr>
+        {% empty %}<tr><td colspan="4" class="text-muted text-center">{% trans "No payments recorded yet." %}</td></tr>{% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Dashboard" %}{% endblock %}
+{% block content %}
+<h3 class="mb-4"><i class="bi bi-speedometer2"></i> {% trans "Dashboard" %}</h3>
+
+{% if user.is_admin_or_committee %}
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card card-stat p-3 text-center">
+            <div class="text-muted small">{% trans "Total Flats" %}</div>
+            <div class="fs-3 fw-bold">{{ total_flats }}</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-stat p-3 text-center">
+            <div class="text-muted small">{% trans "Pending Invoices" %}</div>
+            <div class="fs-3 fw-bold text-warning">{{ pending_invoices }}</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-stat p-3 text-center">
+            <div class="text-muted small">{% trans "Open Complaints" %}</div>
+            <div class="fs-3 fw-bold text-danger">{{ open_complaints }}</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-stat p-3 text-center">
+            <div class="text-muted small">{% trans "Visitors Awaiting Approval" %}</div>
+            <div class="fs-3 fw-bold text-info">{{ pending_visitors }}</div>
+        </div>
+    </div>
+</div>
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="card card-stat p-3">
+            <h6>{% trans "Recent Notices" %}</h6>
+            <ul class="list-group list-group-flush">
+                {% for n in recent_notices %}
+                <li class="list-group-item"><a href="{% url 'notices:detail' n.pk %}">{{ n.title }}</a> <span class="text-muted small">{{ n.posted_on|date:"d M" }}</span></li>
+                {% empty %}<li class="list-group-item text-muted">{% trans "No notices yet." %}</li>{% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card card-stat p-3">
+            <h6>{% trans "Recent Complaints" %}</h6>
+            <ul class="list-group list-group-flush">
+                {% for c in recent_complaints %}
+                <li class="list-group-item"><a href="{% url 'complaints:detail' c.pk %}">{{ c.title }}</a> <span class="badge bg-secondary badge-status">{{ c.get_status_display }}</span></li>
+                {% empty %}<li class="list-group-item text-muted">{% trans "No complaints yet." %}</li>{% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card card-stat p-3">
+            <div class="text-muted small">{% trans "My Flat" %}</div>
+            <div class="fs-5 fw-bold">{% if my_flat %}{{ my_flat }}{% else %}{% trans "Not assigned" %}{% endif %}</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-stat p-3">
+            <div class="text-muted small">{% trans "Pending Dues" %}</div>
+            <div class="fs-5 fw-bold text-warning">{{ my_due_invoices|length }} {% trans "invoice(s)" %}</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-stat p-3">
+            <div class="text-muted small">{% trans "My Bookings" %}</div>
+            <div class="fs-5 fw-bold">{{ my_bookings|length }}</div>
+        </div>
+    </div>
+</div>
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="card card-stat p-3">
+            <h6>{% trans "Recent Notices" %}</h6>
+            <ul class="list-group list-group-flush">
+                {% for n in recent_notices %}
+                <li class="list-group-item"><a href="{% url 'notices:detail' n.pk %}">{{ n.title }}</a></li>
+                {% empty %}<li class="list-group-item text-muted">{% trans "No notices yet." %}</li>{% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card card-stat p-3">
+            <h6>{% trans "My Complaints" %}</h6>
+            <ul class="list-group list-group-flush">
+                {% for c in my_complaints %}
+                <li class="list-group-item"><a href="{% url 'complaints:detail' c.pk %}">{{ c.title }}</a> <span class="badge bg-secondary badge-status">{{ c.get_status_display }}</span></li>
+                {% empty %}<li class="list-group-item text-muted">{% trans "No complaints raised." %}</li>{% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

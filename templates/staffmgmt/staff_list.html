@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Staff" %}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3><i class="bi bi-people"></i> {% trans "Staff Management" %}</h3>
+    <a href="{% url 'staffmgmt:add' %}" class="btn btn-dark btn-sm">+ {% trans "Add Staff" %}</a>
+</div>
+<div class="card card-stat p-3">
+    <table class="table table-hover align-middle">
+        <thead><tr><th>Name</th><th>Category</th><th>Phone</th><th>Salary</th><th>Active</th><th></th></tr></thead>
+        <tbody>
+        {% for s in staff %}
+        <tr>
+            <td>{{ s.name }}</td>
+            <td>{{ s.get_category_display }}</td>
+            <td>{{ s.phone_number|default:"-" }}</td>
+            <td>₹{{ s.monthly_salary }}</td>
+            <td>{% if s.is_active %}✅{% else %}❌{% endif %}</td>
+            <td><a href="{% url 'staffmgmt:detail' s.pk %}" class="btn btn-sm btn-outline-dark">{% trans "View" %}</a></td>
+        </tr>
+        {% empty %}<tr><td colspan="6" class="text-center text-muted py-4">{% trans "No staff added yet." %}</td></tr>{% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
