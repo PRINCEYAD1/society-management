@@ -13,8 +13,8 @@ urlpatterns = [
     path('visitors/', include('visitors.urls')),
     path('amenities/', include('amenities.urls')),
     path('staff/', include('staffmgmt.urls')),
+    path('operations/', include('operations.urls')),
     path('', include('core.urls')),
 ]
-
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
