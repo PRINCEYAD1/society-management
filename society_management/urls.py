@@ -18,3 +18,10 @@ urlpatterns = [
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns = [
+    path("admin/", admin.site.urls),
+
+    path("api/", include("mobile_api.urls")),
+
+    # your existing urls...
+]
