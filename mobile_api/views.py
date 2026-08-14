@@ -36,8 +36,10 @@ from operations.models import (
 from .serializers import (
     NoticeSerializer,
     ComplaintSerializer,
+    VisitorSerializer,
+    InvoiceSerializer,
+    PaymentSerializer,
 )
-
 
 # ============================================================
 # AUTHENTICATION
@@ -887,4 +889,331 @@ class ComplaintDetailView(APIView):
                 "errors": serializer.errors,
             },
             status=status.HTTP_400_BAD_REQUEST
+        )
+class VisitorListCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        role = getattr(user, "role", "")
+
+        if role in ["ADMIN", "SECURITY"] or user.is_superuser:
+            visitors = Visitor.objects.select_related(
+                "visiting_flat",
+                "logged_by"
+            ).order_by("-created_on")
+
+        elif role == "RESIDENT":
+            profile = getattr(user, "resident_profile", None)
+            flat = getattr(profile, "flat", None)
+
+            if not flat:
+                return Response(
+                    {
+                        "success": False,
+                        "message": "No flat is linked with this resident."
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            visitors = Visitor.objects.filter(
+                visiting_flat=flat
+            ).select_related(
+                "visiting_flat",
+                "logged_by"
+            ).order_by("-created_on")
+
+        else:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Access denied."
+                },
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = VisitorSerializer(
+            visitors,
+            many=True,
+            context={"request": request}
+        )
+
+        return Response(
+            {
+                "success": True,
+                "count": visitors.count(),
+                "visitors": serializer.data,
+            },
+            status=status.HTTP_200_OK
+        )
+
+    def post(self, request):
+        user = request.user
+        role = getattr(user, "role", "")
+
+        if role not in ["ADMIN", "SECURITY", "RESIDENT"] and not user.is_superuser:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Access denied."
+                },
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        data = request.data.copy()
+
+        if role == "RESIDENT":
+            profile = getattr(user, "resident_profile", None)
+            flat = getattr(profile, "flat", None)
+
+            if not flat:
+                return Response(
+                    {
+                        "success": False,
+                        "message": "No flat is linked with this resident."
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            data["visiting_flat"] = flat.id
+
+        serializer = VisitorSerializer(
+            data=data,
+            context={"request": request}
+        )
+
+        if serializer.is_valid():
+            serializer.save(logged_by=user)
+
+            return Response(
+                {
+                    "success": True,
+                    "message": "Visitor created successfully.",
+                    "visitor": serializer.data,
+                },
+                status=status.HTTP_201_CREATED
+            )
+
+        return Response(
+            {
+                "success": False,
+                "errors": serializer.errors,
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+class VisitorDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, pk):
+        user = request.user
+        role = getattr(user, "role", "")
+
+        if role not in ["ADMIN", "SECURITY"] and not user.is_superuser:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Security or Admin access required."
+                },
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        visitor = get_object_or_404(
+            Visitor,
+            pk=pk
+        )
+
+        new_status = request.data.get("status")
+
+        if new_status:
+            visitor.status = new_status
+
+            if new_status == "CHECKED_IN":
+                visitor.check_in_time = timezone.now()
+
+            elif new_status == "CHECKED_OUT":
+                visitor.check_out_time = timezone.now()
+
+            visitor.save()
+
+        serializer = VisitorSerializer(
+            visitor,
+            context={"request": request}
+        )
+
+        return Response(
+            {
+                "success": True,
+                "message": "Visitor updated successfully.",
+                "visitor": serializer.data,
+            },
+            status=status.HTTP_200_OK
+        )
+class InvoiceListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        role = getattr(user, "role", "")
+
+        if role == "ADMIN" or user.is_superuser:
+            invoices = Invoice.objects.select_related(
+                "flat",
+                "charge_template"
+            ).order_by("-issue_date")
+
+        elif role == "RESIDENT":
+            profile = getattr(user, "resident_profile", None)
+            flat = getattr(profile, "flat", None)
+
+            if not flat:
+                return Response(
+                    {
+                        "success": False,
+                        "message": "No flat is linked with this resident."
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            invoices = Invoice.objects.filter(
+                flat=flat
+            ).select_related(
+                "flat",
+                "charge_template"
+            ).order_by("-issue_date")
+
+        else:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Billing access denied."
+                },
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = InvoiceSerializer(
+            invoices,
+            many=True,
+            context={"request": request}
+        )
+
+        return Response(
+            {
+                "success": True,
+                "count": invoices.count(),
+                "invoices": serializer.data,
+            },
+            status=status.HTTP_200_OK
+        )
+
+
+class InvoiceDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        user = request.user
+        role = getattr(user, "role", "")
+
+        invoice = get_object_or_404(
+            Invoice.objects.select_related(
+                "flat",
+                "charge_template"
+            ),
+            pk=pk
+        )
+
+        if role == "RESIDENT":
+            profile = getattr(user, "resident_profile", None)
+            flat = getattr(profile, "flat", None)
+
+            if invoice.flat != flat:
+                return Response(
+                    {
+                        "success": False,
+                        "message": "You do not have permission to view this invoice."
+                    },
+                    status=status.HTTP_403_FORBIDDEN
+                )
+
+        elif role != "ADMIN" and not user.is_superuser:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Billing access denied."
+                },
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = InvoiceSerializer(
+            invoice,
+            context={"request": request}
+        )
+
+        return Response(
+            {
+                "success": True,
+                "invoice": serializer.data,
+            },
+            status=status.HTTP_200_OK
+        )
+
+
+class PaymentListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        role = getattr(user, "role", "")
+
+        if role == "ADMIN" or user.is_superuser:
+            payments = Payment.objects.select_related(
+                "invoice",
+                "invoice__flat",
+                "recorded_by"
+            ).order_by("-paid_on")
+
+        elif role == "RESIDENT":
+            profile = getattr(user, "resident_profile", None)
+            flat = getattr(profile, "flat", None)
+
+            if not flat:
+                return Response(
+                    {
+                        "success": False,
+                        "message": "No flat is linked with this resident."
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            payments = Payment.objects.filter(
+                invoice__flat=flat
+            ).select_related(
+                "invoice",
+                "invoice__flat",
+                "recorded_by"
+            ).order_by("-paid_on")
+
+        else:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Billing access denied."
+                },
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = PaymentSerializer(
+            payments,
+            many=True,
+            context={"request": request}
+        )
+
+        return Response(
+            {
+                "success": True,
+                "count": payments.count(),
+                "payments": serializer.data,
+            },
+            status=status.HTTP_200_OK
         )
