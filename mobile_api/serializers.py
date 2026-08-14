@@ -9,6 +9,7 @@ from billing.models import Invoice, Payment
 from operations.models import SocietyAsset, VendorAMC
 from operations.models import Parcel
 from operations.models import Vehicle
+from operations.models import Poll, PollOption, PollVote
 from operations.models import CertificateRequest
 from operations.models import SocietyEvent, SocietyMeeting
 from operations.models import MoveRequest
@@ -698,4 +699,107 @@ class EmergencyContactSerializer(serializers.ModelSerializer):
 
         read_only_fields = [
             "id",
+        ]
+class PollOptionSerializer(serializers.ModelSerializer):
+    vote_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PollOption
+        fields = [
+            "id",
+            "poll",
+            "label",
+            "vote_count",
+        ]
+
+        read_only_fields = [
+            "id",
+            "poll",
+            "vote_count",
+        ]
+
+    def get_vote_count(self, obj):
+        return obj.pollvote_set.count()
+
+
+class PollSerializer(serializers.ModelSerializer):
+    options = serializers.SerializerMethodField()
+    created_by_name = serializers.SerializerMethodField()
+    total_votes = serializers.SerializerMethodField()
+    user_has_voted = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Poll
+        fields = [
+            "id",
+            "question",
+            "description",
+            "closes_at",
+            "is_active",
+            "created_by",
+            "created_by_name",
+            "created_at",
+            "options",
+            "total_votes",
+            "user_has_voted",
+        ]
+
+        read_only_fields = [
+            "id",
+            "created_by",
+            "created_by_name",
+            "created_at",
+            "options",
+            "total_votes",
+            "user_has_voted",
+        ]
+
+    def get_created_by_name(self, obj):
+        if obj.created_by:
+            return obj.created_by.get_full_name() or obj.created_by.username
+        return None
+
+    def get_options(self, obj):
+        options = PollOption.objects.filter(
+            poll=obj
+        ).order_by("id")
+
+        return PollOptionSerializer(
+            options,
+            many=True
+        ).data
+
+    def get_total_votes(self, obj):
+        return PollVote.objects.filter(
+            poll=obj
+        ).count()
+
+    def get_user_has_voted(self, obj):
+        request = self.context.get("request")
+
+        if not request or not request.user.is_authenticated:
+            return False
+
+        return PollVote.objects.filter(
+            poll=obj,
+            user=request.user
+        ).exists()
+
+
+class PollVoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PollVote
+        fields = [
+            "id",
+            "poll",
+            "option",
+            "user",
+            "voted_at",
+        ]
+
+        read_only_fields = [
+            "id",
+            "poll",
+            "user",
+            "voted_at",
         ]

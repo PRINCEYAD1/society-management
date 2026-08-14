@@ -17,6 +17,9 @@ from .views import (
 
     VisitorListCreateView,
     VisitorDetailView,
+    PollListCreateView,
+    PollDetailView,
+    PollVoteView,
 
     InvoiceListView,
     InvoiceDetailView,
@@ -47,7 +50,9 @@ from .views import (
     DomesticWorkerDetailView,
     StaffAttendanceListCreateView,
     StaffAttendanceDetailView,
-
+    PollListCreateView,
+    PollDetailView,
+    PollVoteView,
     CertificateRequestListCreateView,
     CertificateRequestDetailView,
     SocietyEventListCreateView,
@@ -74,6 +79,41 @@ urlpatterns = [
     "events/",
     SocietyEventListCreateView.as_view(),
     name="society_event_list_create",
+    ),
+    
+     path(
+        "polls/",
+        PollListCreateView.as_view(),
+        name="poll_list_create",
+    ),
+    path(
+    "polls/",
+    PollListCreateView.as_view(),
+    name="poll_list_create",
+    ),
+
+    path(
+    "polls/<int:pk>/",
+    PollDetailView.as_view(),
+    name="poll_detail",
+    ),
+
+    path(
+    "polls/<int:pk>/vote/",
+    PollVoteView.as_view(),
+    name="poll_vote",
+    ),
+
+    path(
+        "polls/<int:pk>/",
+        PollDetailView.as_view(),
+        name="poll_detail",
+    ),
+
+    path(
+        "polls/<int:pk>/vote/",
+        PollVoteView.as_view(),
+        name="poll_vote",
     ), 
     path(
     "assets/",

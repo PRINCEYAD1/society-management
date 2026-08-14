@@ -9,6 +9,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from operations.models import Poll, PollOption, PollVote
 
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -47,6 +48,9 @@ from .serializers import (
     EmergencyContactSerializer,
     VendorAMCSerializer,
     AmenitySerializer,
+    PollSerializer,
+    PollOptionSerializer,
+    PollVoteSerializer,
     CertificateRequestSerializer,
     AmenityBookingSerializer,
     ParcelSerializer,
@@ -3460,4 +3464,255 @@ class EmergencyContactDetailView(APIView):
                 "errors": serializer.errors,
             },
             status=status.HTTP_400_BAD_REQUEST
+        )
+# ============================================================
+# POLLS
+# ============================================================
+
+class PollListCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        role = getattr(user, "role", "")
+
+        if role not in ["ADMIN", "RESIDENT"] and not user.is_superuser:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Poll access denied."
+                },
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        polls = Poll.objects.all().order_by("-created_at")
+
+        serializer = PollSerializer(
+            polls,
+            many=True,
+            context={"request": request}
+        )
+
+        return Response(
+            {
+                "success": True,
+                "count": polls.count(),
+                "polls": serializer.data,
+            },
+            status=status.HTTP_200_OK
+        )
+
+    def post(self, request):
+        user = request.user
+        role = getattr(user, "role", "")
+
+        if role != "ADMIN" and not user.is_superuser:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Admin access required."
+                },
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        question = request.data.get("question")
+        description = request.data.get("description", "")
+        closes_at = request.data.get("closes_at")
+        is_active = request.data.get("is_active", True)
+        options = request.data.get("options", [])
+
+        if not question:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Question is required."
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if not isinstance(options, list) or len(options) < 2:
+            return Response(
+                {
+                    "success": False,
+                    "message": "At least two poll options are required."
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        poll = Poll.objects.create(
+            question=question,
+            description=description,
+            closes_at=closes_at,
+            is_active=is_active,
+            created_by=user
+        )
+
+        for label in options:
+            if str(label).strip():
+                PollOption.objects.create(
+                    poll=poll,
+                    label=str(label).strip()
+                )
+
+        return Response(
+            {
+                "success": True,
+                "message": "Poll created successfully.",
+                "poll": PollSerializer(
+                    poll,
+                    context={"request": request}
+                ).data,
+            },
+            status=status.HTTP_201_CREATED
+        )
+
+
+class PollDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        poll = get_object_or_404(
+            Poll,
+            pk=pk
+        )
+
+        serializer = PollSerializer(
+            poll,
+            context={"request": request}
+        )
+
+        return Response(
+            {
+                "success": True,
+                "poll": serializer.data,
+            },
+            status=status.HTTP_200_OK
+        )
+
+    def patch(self, request, pk):
+        user = request.user
+        role = getattr(user, "role", "")
+
+        if role != "ADMIN" and not user.is_superuser:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Admin access required."
+                },
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        poll = get_object_or_404(
+            Poll,
+            pk=pk
+        )
+
+        allowed_fields = [
+            "question",
+            "description",
+            "closes_at",
+            "is_active",
+        ]
+
+        for field in allowed_fields:
+            if field in request.data:
+                setattr(
+                    poll,
+                    field,
+                    request.data[field]
+                )
+
+        poll.save()
+
+        return Response(
+            {
+                "success": True,
+                "message": "Poll updated successfully.",
+                "poll": PollSerializer(
+                    poll,
+                    context={"request": request}
+                ).data,
+            },
+            status=status.HTTP_200_OK
+        )
+
+
+class PollVoteView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        user = request.user
+        role = getattr(user, "role", "")
+
+        if role != "RESIDENT":
+            return Response(
+                {
+                    "success": False,
+                    "message": "Only residents can vote."
+                },
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        poll = get_object_or_404(
+            Poll,
+            pk=pk
+        )
+
+        if not poll.is_active:
+            return Response(
+                {
+                    "success": False,
+                    "message": "This poll is closed."
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if poll.closes_at and timezone.now() > poll.closes_at:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Voting period has ended."
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if PollVote.objects.filter(
+            poll=poll,
+            user=user
+        ).exists():
+            return Response(
+                {
+                    "success": False,
+                    "message": "You have already voted in this poll."
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        option_id = request.data.get("option")
+
+        option = get_object_or_404(
+            PollOption,
+            pk=option_id,
+            poll=poll
+        )
+
+        vote = PollVote.objects.create(
+            poll=poll,
+            option=option,
+            user=user
+        )
+
+        return Response(
+            {
+                "success": True,
+                "message": "Vote submitted successfully.",
+                "vote": PollVoteSerializer(
+                    vote
+                ).data,
+                "poll": PollSerializer(
+                    poll,
+                    context={"request": request}
+                ).data,
+            },
+            status=status.HTTP_201_CREATED
         )
