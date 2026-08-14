@@ -1,5 +1,10 @@
 from rest_framework import serializers
 from notices.models import Notice
+from rest_framework import serializers
+
+from complaints.models import Complaint
+from visitors.models import Visitor
+from billing.models import Invoice, Payment
 
 
 class NoticeSerializer(serializers.ModelSerializer):
@@ -94,6 +99,13 @@ class InvoiceSerializer(serializers.ModelSerializer):
             "notes",
         ]
 
+        read_only_fields = [
+            "id",
+            "flat_name",
+            "charge_name",
+            "issue_date",
+        ]
+
     def get_flat_name(self, obj):
         return str(obj.flat) if obj.flat else None
 
@@ -121,6 +133,15 @@ class PaymentSerializer(serializers.ModelSerializer):
             "reference_number",
         ]
 
+        read_only_fields = [
+            "id",
+            "invoice_title",
+            "flat_name",
+            "paid_on",
+            "recorded_by",
+            "recorded_by_name",
+        ]
+
     def get_invoice_title(self, obj):
         return obj.invoice.title if obj.invoice else None
 
@@ -133,8 +154,6 @@ class PaymentSerializer(serializers.ModelSerializer):
         if obj.recorded_by:
             return obj.recorded_by.get_full_name() or obj.recorded_by.username
         return None
-from visitors.models import Visitor
-
 
 class VisitorSerializer(serializers.ModelSerializer):
     flat_name = serializers.SerializerMethodField()

@@ -1106,6 +1106,152 @@ class InvoiceListView(APIView):
             },
             status=status.HTTP_200_OK
         )
+    def post(self, request):
+        user = request.user
+        role = getattr(user, "role", "")
+
+        # Only Admin can create invoices
+        if role != "ADMIN" and not user.is_superuser:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Admin access required."
+                },
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = InvoiceSerializer(
+            data=request.data,
+            context={"request": request}
+        )
+
+        if serializer.is_valid():
+            invoice = serializer.save()
+
+            return Response(
+                {
+                    "success": True,
+                    "message": "Invoice created successfully.",
+                    "invoice": InvoiceSerializer(
+                        invoice,
+                        context={"request": request}
+                    ).data,
+                },
+                status=status.HTTP_201_CREATED
+            )
+
+        return Response(
+            {
+                "success": False,
+                "errors": serializer.errors,
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+# ============================================================
+# BILLING
+# ============================================================
+
+class InvoiceListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        role = getattr(user, "role", "")
+
+        # Admin can see all invoices
+        if role == "ADMIN" or user.is_superuser:
+            invoices = Invoice.objects.select_related(
+                "flat",
+                "charge_template"
+            ).order_by("-issue_date")
+
+        # Resident can see only invoices for their own flat
+        elif role == "RESIDENT":
+            profile = getattr(user, "resident_profile", None)
+            flat = getattr(profile, "flat", None)
+
+            if not flat:
+                return Response(
+                    {
+                        "success": False,
+                        "message": "No flat is linked with this resident."
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            invoices = Invoice.objects.filter(
+                flat=flat
+            ).select_related(
+                "flat",
+                "charge_template"
+            ).order_by("-issue_date")
+
+        else:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Billing access denied."
+                },
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = InvoiceSerializer(
+            invoices,
+            many=True,
+            context={"request": request}
+        )
+
+        return Response(
+            {
+                "success": True,
+                "count": invoices.count(),
+                "invoices": serializer.data,
+            },
+            status=status.HTTP_200_OK
+        )
+
+    def post(self, request):
+        user = request.user
+        role = getattr(user, "role", "")
+
+        # Only Admin can create invoices
+        if role != "ADMIN" and not user.is_superuser:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Admin access required."
+                },
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = InvoiceSerializer(
+            data=request.data,
+            context={"request": request}
+        )
+
+        if serializer.is_valid():
+            invoice = serializer.save()
+
+            return Response(
+                {
+                    "success": True,
+                    "message": "Invoice created successfully.",
+                    "invoice": InvoiceSerializer(
+                        invoice,
+                        context={"request": request}
+                    ).data,
+                },
+                status=status.HTTP_201_CREATED
+            )
+
+        return Response(
+            {
+                "success": False,
+                "errors": serializer.errors,
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 class InvoiceDetailView(APIView):
@@ -1123,11 +1269,12 @@ class InvoiceDetailView(APIView):
             pk=pk
         )
 
+        # Resident can see only their own flat invoice
         if role == "RESIDENT":
             profile = getattr(user, "resident_profile", None)
             flat = getattr(profile, "flat", None)
 
-            if invoice.flat != flat:
+            if not flat or invoice.flat != flat:
                 return Response(
                     {
                         "success": False,
@@ -1136,6 +1283,7 @@ class InvoiceDetailView(APIView):
                     status=status.HTTP_403_FORBIDDEN
                 )
 
+        # Security and other roles cannot access billing
         elif role != "ADMIN" and not user.is_superuser:
             return Response(
                 {
@@ -1154,8 +1302,62 @@ class InvoiceDetailView(APIView):
             {
                 "success": True,
                 "invoice": serializer.data,
+                "payment_summary": {
+                    "invoice_amount": float(invoice.amount),
+                    "amount_paid": float(invoice.amount_paid()),
+                    "balance": float(invoice.balance()),
+                }
             },
             status=status.HTTP_200_OK
+        )
+
+    def patch(self, request, pk):
+        user = request.user
+        role = getattr(user, "role", "")
+
+        # Only Admin can modify invoices
+        if role != "ADMIN" and not user.is_superuser:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Admin access required."
+                },
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        invoice = get_object_or_404(
+            Invoice,
+            pk=pk
+        )
+
+        serializer = InvoiceSerializer(
+            invoice,
+            data=request.data,
+            partial=True,
+            context={"request": request}
+        )
+
+        if serializer.is_valid():
+            invoice = serializer.save()
+
+            return Response(
+                {
+                    "success": True,
+                    "message": "Invoice updated successfully.",
+                    "invoice": InvoiceSerializer(
+                        invoice,
+                        context={"request": request}
+                    ).data,
+                },
+                status=status.HTTP_200_OK
+            )
+
+        return Response(
+            {
+                "success": False,
+                "errors": serializer.errors,
+            },
+            status=status.HTTP_400_BAD_REQUEST
         )
 
 
@@ -1166,13 +1368,15 @@ class PaymentListView(APIView):
         user = request.user
         role = getattr(user, "role", "")
 
+        # Admin can see all payments
         if role == "ADMIN" or user.is_superuser:
             payments = Payment.objects.select_related(
                 "invoice",
                 "invoice__flat",
                 "recorded_by"
-            ).order_by("-paid_on")
+            ).order_by("-paid_on", "-id")
 
+        # Resident sees only payments for their flat
         elif role == "RESIDENT":
             profile = getattr(user, "resident_profile", None)
             flat = getattr(profile, "flat", None)
@@ -1192,7 +1396,7 @@ class PaymentListView(APIView):
                 "invoice",
                 "invoice__flat",
                 "recorded_by"
-            ).order_by("-paid_on")
+            ).order_by("-paid_on", "-id")
 
         else:
             return Response(
@@ -1216,4 +1420,96 @@ class PaymentListView(APIView):
                 "payments": serializer.data,
             },
             status=status.HTTP_200_OK
+        )
+
+    def post(self, request):
+        user = request.user
+        role = getattr(user, "role", "")
+
+        # Only Admin can record payments
+        if role != "ADMIN" and not user.is_superuser:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Admin access required."
+                },
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer = PaymentSerializer(
+            data=request.data,
+            context={"request": request}
+        )
+
+        if not serializer.is_valid():
+            return Response(
+                {
+                    "success": False,
+                    "errors": serializer.errors,
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        invoice = serializer.validated_data["invoice"]
+        payment_amount = serializer.validated_data["amount"]
+
+        # Payment must be greater than zero
+        if payment_amount <= 0:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Payment amount must be greater than zero."
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        current_balance = invoice.balance()
+
+        # Prevent payment on fully paid invoice
+        if current_balance <= 0:
+            return Response(
+                {
+                    "success": False,
+                    "message": "This invoice is already fully paid."
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Prevent overpayment
+        if payment_amount > current_balance:
+            return Response(
+                {
+                    "success": False,
+                    "message": (
+                        f"Payment amount cannot exceed the outstanding "
+                        f"balance of ₹{current_balance}."
+                    )
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        payment = serializer.save(
+            recorded_by=user
+        )
+
+        # Payment.save() automatically updates invoice status
+        invoice.refresh_from_db()
+
+        return Response(
+            {
+                "success": True,
+                "message": "Payment recorded successfully.",
+                "payment": PaymentSerializer(
+                    payment,
+                    context={"request": request}
+                ).data,
+                "invoice_summary": {
+                    "invoice_id": invoice.id,
+                    "invoice_amount": float(invoice.amount),
+                    "amount_paid": float(invoice.amount_paid()),
+                    "balance": float(invoice.balance()),
+                    "status": invoice.status,
+                }
+            },
+            status=status.HTTP_201_CREATED
         )
