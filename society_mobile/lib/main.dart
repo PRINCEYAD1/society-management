@@ -41,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
   bool _obscurePassword = true;
 
-  final String baseUrl = 'http://10.0.2.2:8000/api';
+  final String baseUrl = 'https://society-management-pk7x.onrender.com/api';
 
   Future<void> _login() async {
     // Prevent duplicate login requests caused by repeated taps.
@@ -344,7 +344,7 @@ class AdminDashboardScreen extends StatefulWidget {
 class _AdminDashboardScreenState
     extends State<AdminDashboardScreen> {
   final _storage = const FlutterSecureStorage();
-  final String baseUrl = 'http://10.0.2.2:8000/api';
+  final String baseUrl = 'https://society-management-pk7x.onrender.com/api';
 
   bool _isLoading = true;
   String? _error;
@@ -857,7 +857,7 @@ class AdminModuleScreen extends StatefulWidget {
 class _AdminModuleScreenState
     extends State<AdminModuleScreen> {
   final _storage = const FlutterSecureStorage();
-  final String baseUrl = 'http://10.0.2.2:8000/api';
+  final String baseUrl = 'https://society-management-pk7x.onrender.com/api';
 
   bool _isLoading = true;
   bool _isSubmitting = false;
@@ -2720,7 +2720,7 @@ class _SecurityDashboardScreenState
     extends State<SecurityDashboardScreen> {
   final _storage = const FlutterSecureStorage();
 
-  final String baseUrl = 'http://10.0.2.2:8000/api';
+  final String baseUrl = 'https://society-management-pk7x.onrender.com/api';
 
   bool _isLoading = true;
   String? _error;
@@ -3139,7 +3139,7 @@ class SecurityModuleScreen extends StatefulWidget {
 class _SecurityModuleScreenState
     extends State<SecurityModuleScreen> {
   final _storage = const FlutterSecureStorage();
-  final String baseUrl = 'http://10.0.2.2:8000/api';
+  final String baseUrl = 'https://society-management-pk7x.onrender.com/api';
 
   bool _isLoading = true;
   bool _isSubmitting = false;
@@ -4157,7 +4157,7 @@ class _ResidentDashboardScreenState
     extends State<ResidentDashboardScreen> {
   final _storage = const FlutterSecureStorage();
 
-  final String baseUrl = 'http://10.0.2.2:8000/api';
+  final String baseUrl = 'https://society-management-pk7x.onrender.com/api';
 
   bool _isLoading = true;
   String? _error;
@@ -4936,7 +4936,7 @@ class ResidentDataScreen extends StatefulWidget {
 
 class _ResidentDataScreenState extends State<ResidentDataScreen> {
   final _storage = const FlutterSecureStorage();
-  final String baseUrl = 'http://10.0.2.2:8000/api';
+  final String baseUrl = 'https://society-management-pk7x.onrender.com/api';
 
   bool _isLoading = true;
   bool _isSubmitting = false;
@@ -6020,7 +6020,7 @@ class BillsScreen extends StatefulWidget {
 
 class _BillsScreenState extends State<BillsScreen> {
   final _storage = const FlutterSecureStorage();
-  final String baseUrl = 'http://10.0.2.2:8000/api';
+  final String baseUrl = 'https://society-management-pk7x.onrender.com/api';
 
   bool _isLoading = true;
   String? _error;
@@ -6282,7 +6282,7 @@ class _ComplaintsScreenState
   final _storage = const FlutterSecureStorage();
 
   final String baseUrl =
-      'http://10.0.2.2:8000/api';
+      'https://society-management-pk7x.onrender.com/api';
 
   bool _isLoading = true;
   String? _error;
@@ -6568,7 +6568,7 @@ class _CreateComplaintDialogState
       TextEditingController();
 
   final String baseUrl =
-      'http://10.0.2.2:8000/api';
+      'https://society-management-pk7x.onrender.com/api';
 
   String _category = 'PLUMBING';
   String _priority = 'MEDIUM';
