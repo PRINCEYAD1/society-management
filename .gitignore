@@ -5,3 +5,40 @@ media/
 venv/
 .env
 data.json
+
+# ==============================
+# Django / Python
+# ==============================
+__pycache__/
+*.pyc
+db.sqlite3
+media/
+venv/
+.env
+data.json
+
+# ==============================
+# Flutter Mobile App
+# ==============================
+society_mobile/.dart_tool/
+society_mobile/build/
+society_mobile/.flutter-plugins
+society_mobile/.flutter-plugins-dependencies
+
+# Android generated files
+society_mobile/android/.gradle/
+society_mobile/android/local.properties
+
+# iOS generated files
+society_mobile/ios/Pods/
+society_mobile/ios/.symlinks/
+society_mobile/ios/Flutter/ephemeral/
+
+# IDE generated files
+society_mobile/.idea/
+society_mobile/*.iml
+
+# Flutter generated platform files
+society_mobile/linux/flutter/ephemeral/
+society_mobile/macos/Flutter/ephemeral/
+society_mobile/windows/flutter/ephemeral/

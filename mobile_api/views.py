@@ -32,6 +32,7 @@ from operations.models import (
     CertificateRequest,
     SocietyMeeting,
     Poll,
+    EmergencyContact,
     SocietyAsset,
     LostFoundItem,
     SocietyEvent,
