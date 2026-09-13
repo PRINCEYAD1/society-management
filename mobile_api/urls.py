@@ -9,6 +9,7 @@ from .admin_extra import (
     LostFoundListCreateView,
     LostFoundDetailView,
 )
+from .lookups import BuildingLookupView, FlatLookupView, InvoiceLookupView
 from .views import (
     MobileLoginView,
     ProfileView,
@@ -59,17 +60,19 @@ from .views import (
 app_name = "mobile_api"
 
 urlpatterns = [
-    # Authentication and profile
     path("auth/login/", MobileLoginView.as_view(), name="mobile_login"),
     path("auth/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("profile/", ProfileView.as_view(), name="profile"),
 
-    # Role dashboards
     path("dashboard/admin/", AdminDashboardView.as_view(), name="admin_dashboard"),
     path("dashboard/security/", SecurityDashboardView.as_view(), name="security_dashboard"),
     path("dashboard/resident/", ResidentDashboardView.as_view(), name="resident_dashboard"),
 
-    # Core administration
+    # Small admin-only lookup payloads used by mobile dropdown controls.
+    path("lookups/buildings/", BuildingLookupView.as_view(), name="building_lookup"),
+    path("lookups/flats/", FlatLookupView.as_view(), name="flat_lookup"),
+    path("lookups/invoices/", InvoiceLookupView.as_view(), name="invoice_lookup"),
+
     path("flats/", FlatListCreateView.as_view(), name="flat_list_create"),
     path("flats/<int:pk>/", FlatDetailView.as_view(), name="flat_detail"),
     path("residents/", ResidentListCreateView.as_view(), name="resident_list_create"),
@@ -77,27 +80,22 @@ urlpatterns = [
     path("lost-found/", LostFoundListCreateView.as_view(), name="lost_found_list_create"),
     path("lost-found/<int:pk>/", LostFoundDetailView.as_view(), name="lost_found_detail"),
 
-    # Notices and complaints
     path("notices/", NoticeListCreateView.as_view(), name="notice_list_create"),
     path("notices/<int:pk>/", NoticeDetailView.as_view(), name="notice_detail"),
     path("complaints/", ComplaintListCreateView.as_view(), name="complaint_list_create"),
     path("complaints/<int:pk>/", ComplaintDetailView.as_view(), name="complaint_detail"),
 
-    # Visitors
     path("visitors/", VisitorListCreateView.as_view(), name="visitor_list_create"),
     path("visitors/<int:pk>/", VisitorDetailView.as_view(), name="visitor_detail"),
 
-    # Billing
     path("billing/invoices/", InvoiceListView.as_view(), name="invoice_list"),
     path("billing/invoices/<int:pk>/", InvoiceDetailView.as_view(), name="invoice_detail"),
     path("billing/payments/", PaymentListView.as_view(), name="payment_list"),
 
-    # Amenities
     path("amenities/", AmenityListView.as_view(), name="amenity_list"),
     path("amenities/bookings/", AmenityBookingListCreateView.as_view(), name="amenity_booking_list_create"),
     path("amenities/bookings/<int:pk>/", AmenityBookingDetailView.as_view(), name="amenity_booking_detail"),
 
-    # Operations
     path("parcels/", ParcelListCreateView.as_view(), name="parcel_list_create"),
     path("parcels/<int:pk>/", ParcelDetailView.as_view(), name="parcel_detail"),
     path("vehicles/", VehicleListCreateView.as_view(), name="vehicle_list_create"),
@@ -123,7 +121,6 @@ urlpatterns = [
     path("emergency-contacts/", EmergencyContactListCreateView.as_view(), name="emergency_contact_list_create"),
     path("emergency-contacts/<int:pk>/", EmergencyContactDetailView.as_view(), name="emergency_contact_detail"),
 
-    # Polls
     path("polls/", PollListCreateView.as_view(), name="poll_list_create"),
     path("polls/<int:pk>/", PollDetailView.as_view(), name="poll_detail"),
     path("polls/<int:pk>/vote/", PollVoteView.as_view(), name="poll_vote"),
