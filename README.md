@@ -2,70 +2,35 @@
 
 A full-stack residential society management platform built with **Django**, **Django REST Framework**, **PostgreSQL**, and **Flutter**.
 
-The project now includes:
+The project provides a centralized system for society administrators, residents, security personnel, committee members, and staff to manage day-to-day society operations from both a web application and a mobile application.
 
-- A complete Django web application for society administration and day-to-day operations
-- Role-based dashboards and permissions
-- A secure REST API with JWT authentication
-- A Flutter Android application connected to the same backend
-- Production deployment on Render
-- PostgreSQL-ready production configuration
-- Cloud/media support using Cloudinary
-
-The main goal of the project is to provide one centralized system where administrators, residents, security staff, committee members, and society staff can manage society operations from both the **web application** and the **mobile application**.
+> **Security note:** This public README intentionally excludes credentials, private URLs, database connection details, signing information, secret values, internal infrastructure details, and other sensitive deployment information.
 
 ---
 
-## Live Application
+## Overview
 
-Production web application:
-
-**https://society-management-pk7x.onrender.com/**
-
-Production API base URL:
+The system contains three main layers:
 
 ```text
-https://society-management-pk7x.onrender.com/api/
+Web Application
+      │
+      ├── Django Backend / REST API
+      │          │
+      │          └── Central Database
+      │
+Mobile Application
 ```
 
-The Flutter mobile application is configured to communicate with the production Django REST API.
+Both the web and mobile clients use the same backend and central data source, so information created or updated from one client can be reflected in the other.
 
 ---
 
-# System Architecture
+## Main Features
 
-```text
-                 ┌──────────────────────┐
-                 │      Web Browser     │
-                 │ Django + Bootstrap 5 │
-                 └──────────┬───────────┘
-                            │
-                            │ HTTPS
-                            │
-                 ┌──────────▼───────────┐
-                 │     Django Backend   │
-                 │  Django REST API     │
-                 │ JWT Authentication   │
-                 └──────────┬───────────┘
-                            │
-             ┌──────────────┼──────────────┐
-             │              │              │
-             ▼              ▼              ▼
-      PostgreSQL       Cloudinary      Flutter App
-       Database        Media/Files      Android Client
-```
+### Authentication and Role-Based Access
 
-Both the web application and Flutter application use the same backend and database. Data created or updated from one client is therefore available to the other client.
-
----
-
-# Main Features
-
-## 1. Authentication and Role-Based Access
-
-The system uses a custom Django user model with multiple society roles.
-
-Supported roles include:
+The platform supports multiple user roles, including:
 
 - Admin
 - Committee
@@ -73,135 +38,113 @@ Supported roles include:
 - Security
 - Staff
 
-The application provides role-aware dashboards and restricts access according to the logged-in user's responsibilities.
+Permissions and available functionality are controlled according to the authenticated user's role.
 
-Examples:
-
-- Residents see information related to their own flat and society activity.
-- Admin users can manage major society modules.
-- Security users can work with visitor-related operations.
-- Staff members can be assigned operational work such as complaints.
-
-The mobile API uses **JWT authentication** through Django REST Framework Simple JWT.
-
-Main authentication endpoints:
-
-```text
-POST /api/auth/login/
-POST /api/auth/refresh/
-GET  /api/profile/
-```
+The mobile application uses token-based authentication and stores authentication data securely on the device.
 
 ---
 
-# Web Application Modules
+## Society and Resident Management
 
-## Accounts
-
-- Custom user model
-- Login and logout
-- User profiles
-- Role-based access
-- Resident account management
-
-## Core Society Management
-
-- Society management
+- Society structure management
 - Building management
 - Flat management
+- Resident management
 - Resident-to-flat assignment
-- Role-aware dashboard
+- Role-aware dashboards
 - Society overview statistics
 
-## Billing
+---
 
-- Maintenance charge templates
+## Billing and Payments
+
+- Maintenance charge management
 - Invoice generation
-- Individual invoice tracking
+- Invoice status tracking
 - Payment recording
 - Multiple payment methods
-- Invoice status handling
-  - Pending
-  - Partial
-  - Paid
-  - Overdue
 - Outstanding amount tracking
-- Monthly collection information
+- Monthly collection reporting
+- Expense tracking
+
+Invoice workflows support common states such as pending, partial, paid, and overdue.
+
+---
 
 ## Notices
 
-Society administrators can publish notices such as:
+Administrators can publish and manage society notices such as:
 
-- General notices
-- Maintenance announcements
+- General announcements
+- Maintenance updates
 - Events
 - Urgent notices
 - Meeting notices
 
-Notices can also support pinning and file attachments.
+The notice system can also support attachments and pinned announcements.
 
-## Complaints
+---
 
-Complaint/ticket management includes:
+## Complaint Management
 
-- Complaint category
-- Priority
-- Status
+The complaint module supports:
+
+- Complaint categories
+- Priority levels
+- Status tracking
 - Staff assignment
 - Comments and discussion workflow
 
+This allows complaints to be tracked from creation through resolution.
+
+---
+
 ## Visitor Management
 
-Visitor management supports the society gate workflow, including visitor registration and tracking.
+The visitor module supports society gate operations such as:
 
-Typical flow:
+- Visitor registration
+- Resident/admin review
+- Check-in
+- Check-out
+- Visitor history
 
-```text
-Security logs visitor
-        ↓
-Resident/Admin reviews visitor
-        ↓
-Visitor is checked in
-        ↓
-Visitor is checked out
-```
+---
 
 ## Amenities
 
 - Amenity listing
 - Booking requests
-- Booking confirmation/cancellation
+- Booking confirmation
+- Booking cancellation
 - Booking fee support
 
-## Staff Management
+---
+
+## Staff and Domestic Worker Management
 
 - Staff directory
-- Security staff
-- Housekeeping
-- Plumber
-- Electrician
-- Other society workers
+- Security personnel
+- Housekeeping staff
+- Plumber/electrician and other service staff
+- Domestic worker records
 - Attendance tracking
 
 ---
 
-# Extended Society Operations
+## Extended Operations
 
-The application was expanded beyond the original modules to cover additional society operations.
-
-These include:
+Additional society-management functionality includes:
 
 - Parcels
 - Vehicles
-- Domestic workers
-- Domestic worker attendance
 - Move-in / move-out requests
 - Certificate requests
 - Society events
-- Society meetings
+- Meetings
 - Society assets
 - Vendor and AMC management
-- Society expenses
+- Expenses
 - Emergency contacts
 - Polls and voting
 - Lost & Found
@@ -210,203 +153,81 @@ These include:
 
 # REST API
 
-A dedicated `mobile_api` Django application provides API access for the Flutter application.
+A dedicated Django REST API supports the Flutter application and selected web/mobile workflows.
 
-The API uses:
+The API includes functionality for:
 
-- Django REST Framework
-- JWT authentication
-- Role-aware access control
-- JSON request/response payloads
-- Admin-only lookup endpoints for dropdown fields
+- Authentication
+- User profile information
+- Role-specific dashboards
+- Flats
+- Residents
+- Lost & Found
+- Notices
+- Complaints
+- Visitors
+- Invoices
+- Payments
+- Amenities and bookings
+- Parcels
+- Vehicles
+- Move requests
+- Domestic workers
+- Attendance
+- Certificate requests
+- Events
+- Meetings
+- Assets
+- Vendor/AMC records
+- Expenses
+- Emergency contacts
+- Polls and voting
 
-## Dashboard APIs
-
-```text
-GET /api/dashboard/admin/
-GET /api/dashboard/security/
-GET /api/dashboard/resident/
-```
-
-## Secure Lookup APIs
-
-These small lookup endpoints are used by the Flutter forms so users can select readable values instead of manually entering database IDs.
-
-```text
-GET /api/lookups/buildings/
-GET /api/lookups/flats/
-GET /api/lookups/invoices/
-```
-
-The lookup endpoints are protected and intended for authorized administrative workflows.
-
-## Flat and Resident APIs
-
-```text
-GET/POST /api/flats/
-GET/PUT/PATCH/DELETE /api/flats/<id>/
-
-GET/POST /api/residents/
-GET/PUT/PATCH/DELETE /api/residents/<id>/
-```
-
-## Lost & Found APIs
-
-```text
-GET/POST /api/lost-found/
-GET/PUT/PATCH/DELETE /api/lost-found/<id>/
-```
-
-## Notice APIs
-
-```text
-GET/POST /api/notices/
-GET/PUT/PATCH/DELETE /api/notices/<id>/
-```
-
-## Complaint APIs
-
-```text
-GET/POST /api/complaints/
-GET/PUT/PATCH/DELETE /api/complaints/<id>/
-```
-
-## Visitor APIs
-
-```text
-GET/POST /api/visitors/
-GET/PUT/PATCH/DELETE /api/visitors/<id>/
-```
-
-## Billing APIs
-
-```text
-GET /api/billing/invoices/
-GET /api/billing/invoices/<id>/
-GET/POST /api/billing/payments/
-```
-
-## Amenity APIs
-
-```text
-GET /api/amenities/
-GET/POST /api/amenities/bookings/
-GET/PUT/PATCH/DELETE /api/amenities/bookings/<id>/
-```
-
-## Additional Operational APIs
-
-```text
-/api/parcels/
-/api/vehicles/
-/api/move-requests/
-/api/domestic-workers/
-/api/domestic-workers/attendance/
-/api/certificate-requests/
-/api/events/
-/api/meetings/
-/api/assets/
-/api/vendor-amc/
-/api/expenses/
-/api/emergency-contacts/
-/api/polls/
-```
-
-Poll voting is available through:
-
-```text
-POST /api/polls/<id>/vote/
-```
+Administrative form fields that reference related records use protected lookup services so users can select readable values instead of manually entering database IDs.
 
 ---
 
 # Flutter Mobile Application
 
-A Flutter mobile client is located in:
+The repository includes a Flutter mobile client for Android.
 
-```text
-society_mobile/
-```
-
-The application communicates directly with the Django REST API.
-
-## Mobile Technology
+### Mobile Technology
 
 - Flutter
 - Dart
-- Material UI
-- `http` package for API requests
-- `flutter_secure_storage` for authentication token storage
-- JWT access and refresh tokens
+- Material Design
+- HTTP-based API integration
+- Secure local token storage
+- Role-based navigation
 
-Current Flutter application version:
+### Mobile Dashboards
 
-```text
-1.0.0+1
-```
-
-Android application ID:
-
-```text
-com.princeyadav.societymanagement
-```
-
-User-facing application name:
-
-```text
-Society Management
-```
-
----
-
-# Flutter Authentication Flow
-
-```text
-Login Screen
-     ↓
-POST /api/auth/login/
-     ↓
-Receive Access + Refresh Token
-     ↓
-Store tokens securely
-     ↓
-Read authenticated user role
-     ↓
-Open role-specific dashboard
-```
-
-The Flutter login flow also includes validation and safe handling for unsuccessful server responses.
-
----
-
-# Mobile Dashboards
-
-The Flutter application includes role-specific dashboards for:
+The mobile application includes role-specific dashboards for:
 
 - Admin
 - Resident
 - Security
 
-The Admin dashboard includes society overview information such as:
+The admin dashboard displays useful society information such as:
 
 - Total flats
 - Total residents
 - Pending invoices
-- Outstanding amount
-- Collection for the current month
-- Monthly expenses
+- Outstanding balances
+- Monthly collections
+- Expenses
 - Open complaints
-- Visitors today
-- Parcels waiting
-- Vehicle and operational statistics
+- Visitor activity
+- Parcel status
+- Other operational statistics
 
-Dashboard cards are responsive so the layout can adapt to different screen sizes.
+The dashboard layout is responsive for different device sizes.
 
 ---
 
-# Flutter Admin Modules
+## Flutter Admin Modules
 
-The Flutter admin interface provides access to modules including:
+The mobile admin interface provides access to modules including:
 
 - Flats
 - Residents
@@ -432,166 +253,47 @@ The Flutter admin interface provides access to modules including:
 - Emergency contacts
 - Polls
 
-Several modules support create and edit workflows directly from the mobile application.
+Several modules support create, edit, view, and workflow actions directly from the mobile application.
 
 ---
 
-# Mobile Form Improvements
+## Mobile UX Improvements
 
-The mobile application originally required raw numeric database IDs in several forms. This was improved with secure dropdown lookup APIs.
+The mobile application includes improvements such as:
 
-Examples:
-
-- Building selection when creating a flat
-- Flat selection when creating a resident
-- Flat selection for visitors
-- Flat selection for invoices
-- Invoice selection for payments
-- Flat selection for parcels
-- Flat selection for vehicles
-
-This provides a much more practical user experience and reduces incorrect ID entry.
-
----
-
-# Mobile Stability Improvements
-
-Several Flutter lifecycle and navigation improvements have been implemented while testing the application.
-
-Examples include:
-
-- Preventing duplicate login actions
-- Login request timeout handling
-- Safe JSON response validation
-- Token and user validation
-- Secure storage cleanup on expired authentication
-- Mounted-context checks before navigation
-- Stable dashboard navigation
-- Dialog lifecycle fixes
+- Secure dropdown selection for related records
+- Login request validation
+- Duplicate-action prevention
+- Request timeout handling
+- Safe API response handling
+- Role-based navigation
+- Session cleanup when authentication expires
+- Dialog lifecycle improvements
 - Safer asynchronous form submission
-- Responsive dashboard card layout
-- Android Internet permission configuration
-
-The application has also been tested using the Android emulator in both debug and release builds.
+- Responsive dashboard cards
+- Android network access configuration
 
 ---
 
-# Android Release Configuration
-
-The Flutter Android project has been prepared for signed release builds.
-
-The Android package name is:
-
-```text
-com.princeyadav.societymanagement
-```
-
-Release signing uses a private upload keystore configured through:
-
-```text
-android/key.properties
-android/upload-keystore.jks
-```
-
-These files are intentionally excluded from Git and must never be committed.
-
-Example release commands:
-
-```bash
-flutter clean
-flutter pub get
-flutter analyze
-flutter build apk --release
-flutter build appbundle --release
-```
-
-Generated release files:
-
-```text
-build/app/outputs/flutter-apk/app-release.apk
-build/app/outputs/bundle/release/app-release.aab
-```
-
-The AAB is intended for Google Play distribution.
-
----
-
-# Production Deployment
-
-The Django application is deployed on **Render**.
-
-Production components include:
-
-- Django application
-- Gunicorn
-- PostgreSQL
-- WhiteNoise static file handling
-- Cloudinary support for media
-- Environment-based configuration
-- HTTPS
-
-Production dependencies include:
-
-- Django 6.1
-- Django REST Framework
-- Simple JWT
-- PostgreSQL driver (`psycopg2-binary`)
-- Gunicorn
-- WhiteNoise
-- Cloudinary
-- `dj-database-url`
-- `python-decouple`
-- `django-cors-headers`
-
----
-
-# Security
-
-Security-related implementation includes:
-
-- JWT authentication for the mobile API
-- Authentication required by default for API endpoints
-- Role-aware permissions
-- Secure token storage on mobile
-- HTTPS production deployment
-- Secure cookies when production security settings are enabled
-- HSTS support
-- Clickjacking protection
-- Content-type protection
-- CORS configuration
-- Environment-based secret configuration
-
-For production deployments, always ensure:
-
-```text
-DEBUG=False
-SECRET_KEY=<strong private environment value>
-DATABASE_URL=<production PostgreSQL URL>
-```
-
-Never commit production credentials, database passwords, signing keys, `key.properties`, or private keystores to GitHub.
-
----
-
-# Tech Stack
+# Technology Stack
 
 ## Backend
 
 - Python
-- Django 6.1
+- Django
 - Django REST Framework
-- Simple JWT
-- Gunicorn
+- JWT-based authentication
+- Gunicorn-compatible production deployment
 
 ## Database
 
-- PostgreSQL for production
-- SQLite can still be used for simple local development where configured
+- PostgreSQL for production use
+- SQLite can be used for local development when configured
 
 ## Web Frontend
 
 - Django Templates
-- Bootstrap 5
+- Bootstrap
 - HTML
 - CSS
 - JavaScript
@@ -602,26 +304,20 @@ Never commit production credentials, database passwords, signing keys, `key.prop
 - Dart
 - Material Design
 - HTTP API integration
-- Flutter Secure Storage
+- Secure storage
 
 ## Media and Static Files
 
-- Cloudinary
-- django-cloudinary-storage
-- WhiteNoise
-
-## Deployment
-
-- Render
-- PostgreSQL
+- Cloud media support
+- Static-file serving support
 
 ## Development Tools
 
 - Git
 - GitHub
-- Android Studio / Android SDK
+- Android SDK
 - Android Emulator
-- VS Code
+- VS Code / Android Studio
 
 ---
 
@@ -629,101 +325,69 @@ Never commit production credentials, database passwords, signing keys, `key.prop
 
 ```text
 society_management/
-├── accounts/                 # users, roles, profiles and authentication
-├── amenities/                # amenities and booking workflows
-├── billing/                  # invoices, payments and billing logic
-├── complaints/               # complaint/ticket management
-├── core/                     # society, building, flat and dashboard logic
-├── mobile_api/               # REST API used by the Flutter application
-├── notices/                  # society notices and announcements
+├── accounts/                 # users, roles and profiles
+├── amenities/                # amenities and bookings
+├── billing/                  # invoices and payments
+├── complaints/               # complaint management
+├── core/                     # society, buildings, flats and dashboards
+├── mobile_api/               # REST API for the mobile application
+├── notices/                  # notices and announcements
 ├── operations/               # extended society operations
-├── staffmgmt/                # staff and attendance management
-├── visitors/                 # visitor and gate workflows
-├── society_management/       # Django project settings and root URLs
-├── society_mobile/           # Flutter Android/mobile application
-├── templates/                # Django HTML templates
+├── staffmgmt/                # staff and attendance
+├── visitors/                 # visitor workflows
+├── society_management/       # Django project configuration
+├── society_mobile/           # Flutter application
+├── templates/                # web templates
 ├── static/                   # static assets
-├── media/                    # uploaded media in development
 ├── manage.py
 └── requirements.txt
 ```
 
 ---
 
-# Local Backend Setup
+# Local Development
 
-## 1. Clone the repository
+## Backend
+
+Clone the repository and create a virtual environment:
 
 ```bash
-git clone https://github.com/PRINCEYAD1/society-management.git
+git clone <repository-url>
 cd society-management
-```
-
-## 2. Create a virtual environment
-
-Windows:
-
-```cmd
 python -m venv venv
-venv\Scripts\activate
 ```
 
-Linux/macOS:
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
-## 3. Install dependencies
+Activate the virtual environment and install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## 4. Configure environment variables
+Configure the required environment variables locally. Never commit real secret values or production credentials.
 
-Create the required environment variables for your environment.
-
-Typical production values include:
-
-```text
-SECRET_KEY=your-secret-key
-DEBUG=False
-DATABASE_URL=your-postgresql-database-url
-```
-
-Do not commit real secret values.
-
-## 5. Apply migrations
+Apply migrations:
 
 ```bash
 python manage.py migrate
 ```
 
-## 6. Create an administrator
+Create an administrator if needed:
 
 ```bash
 python manage.py createsuperuser
 ```
 
-## 7. Start Django
+Run the development server:
 
 ```bash
 python manage.py runserver
 ```
 
-Local web application:
-
-```text
-http://127.0.0.1:8000/
-```
-
 ---
 
-# Flutter Setup
+## Flutter
 
-Move into the Flutter project:
+Move into the Flutter application directory:
 
 ```bash
 cd society_mobile
@@ -735,46 +399,32 @@ Install packages:
 flutter pub get
 ```
 
-Verify the project:
+Check the project:
 
 ```bash
 flutter analyze
 ```
 
-List available devices:
-
-```bash
-flutter devices
-```
-
-Run on an Android emulator/device:
+Run on a connected emulator or device:
 
 ```bash
 flutter run
 ```
 
-For an Android emulator accessing a local Django development server, the host machine can normally be reached through:
-
-```text
-http://10.0.2.2:8000/
-```
-
-The production mobile build uses the deployed HTTPS API.
-
 ---
 
 # Testing
 
-Django system check:
+Backend checks:
 
 ```bash
 python manage.py check
 ```
 
-Example API authorization tests:
+Run Django tests:
 
 ```bash
-python manage.py test mobile_api.tests_lookups
+python manage.py test
 ```
 
 Flutter static analysis:
@@ -783,39 +433,87 @@ Flutter static analysis:
 flutter analyze
 ```
 
-Android release build:
-
-```bash
-flutter build apk --release
-```
+Create a release build only after local and integration testing has passed.
 
 ---
 
-# Data Strategy
+# Data Architecture
 
-The system follows a single-source-of-truth architecture.
+The project follows a single-source-of-truth model:
 
 ```text
-Web Application ─┐
-                 ├── Django Backend ─── PostgreSQL
-Flutter App ─────┘
+Web Client ─────┐
+                ├── Backend ─── Central Database
+Mobile Client ──┘
 ```
 
-The Flutter application does not maintain a separate society database. All important operational information is stored centrally through Django/PostgreSQL.
+The Flutter application does not maintain a separate primary society database. Operational data is stored centrally through the backend.
 
-This allows data entered from the web interface to appear in the mobile application and vice versa.
+This design helps keep resident, billing, visitor, complaint, and operational information consistent across web and mobile clients.
 
-For larger societies, existing resident/flat information can be imported into the central database through a validated bulk-import process rather than manually maintaining separate datasets.
+---
+
+# Security Practices
+
+The project is designed with security-conscious practices including:
+
+- Authentication required for protected API functionality
+- Role-based authorization
+- Secure mobile token storage
+- HTTPS in production
+- Environment-based configuration for secrets
+- Production security headers and secure-cookie support
+- Cross-origin access controls
+- Input validation
+- Protected administrative operations
+
+### Never commit or publish
+
+- Passwords
+- API keys
+- Secret keys
+- Database credentials
+- Database connection strings
+- Private service URLs
+- Signing passwords
+- Signing key files
+- Authentication tokens
+- Production environment files
+- Real resident or society personal data
+- Private server or infrastructure configuration
+
+Use environment variables or a secure secret manager for production secrets.
+
+---
+
+# Production Readiness
+
+Before a real production launch, the project should be reviewed for:
+
+- Production environment configuration
+- Strong secret management
+- Database backups and restore testing
+- Authentication and authorization review
+- Login throttling / brute-force protection
+- API permission testing
+- Upload validation
+- Logging and monitoring
+- Error reporting
+- Data privacy
+- Dependency updates
+- Security testing
+
+No application can be guaranteed to be completely immune from attack, so production security should be reviewed continuously.
 
 ---
 
 # Current Development Status
 
-Implemented and working areas include:
+Implemented areas include:
 
 - Django web application
-- Role-based access
-- Society/building/flat structure
+- Role-based authentication and authorization
+- Society/building/flat management
 - Resident management
 - Billing and payments
 - Notices
@@ -825,63 +523,17 @@ Implemented and working areas include:
 - Staff management
 - Extended operations modules
 - REST API
-- JWT login and refresh
-- Admin/resident/security API dashboards
-- Secure lookup APIs
+- Mobile authentication
+- Role-specific mobile dashboards
+- Secure lookup/dropdown workflows
 - Flutter Android application
-- Production API connection
-- Secure token storage
-- Android release signing setup
-- Signed release APK generation
-- Production deployment on Render
+- Production-ready database architecture
+- Signed Android release workflow
 
-Ongoing release work includes final UI verification, runtime regression testing, release AAB generation, and Play Store preparation.
+The project continues to be improved through testing, UI refinement, security hardening, and production-readiness work.
 
 ---
 
-# Future Improvements
+## Important
 
-Potential future enhancements include:
-
-- Push notifications
-- Email/SMS/WhatsApp alerts
-- Online payment gateway integration
-- Advanced reporting and analytics
-- Bulk Excel/CSV resident import interface
-- Mobile image/file uploads
-- Improved offline handling
-- Shared production cache and API throttling
-- Audit logs
-- Automated database backups and restore testing
-- Google Play Store publishing
-- iOS build and release
-
----
-
-# Important Security Notes
-
-Do not commit any of the following:
-
-```text
-.env
-SECRET_KEY
-DATABASE_URL
-Database passwords
-Cloudinary secrets
-android/key.properties
-android/upload-keystore.jks
-Production admin passwords
-JWT credentials/tokens
-```
-
-Use environment variables and secure secret-management practices for production systems.
-
----
-
-# Repository
-
-GitHub:
-
-**PRINCEYAD1/society-management**
-
-This project is actively being developed as a complete web + mobile society management platform.
+This repository is intended to document and demonstrate the application's architecture and functionality. Sensitive production configuration is deliberately not documented in this public README.
